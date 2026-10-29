@@ -4,9 +4,11 @@ This is the class directory of firms. The published directory page lists every r
 
 ## How your team joins
 
-1. Get your team's slug from the instructor (for example `brick-house`). It must match the name in `assignments.json`.
-2. Open this repo on GitHub, go to `teams/`, and choose **Add file → Create new file**.
-3. Name the file `teams/<your-slug>.json` and paste in:
+1. Decide on a name for your team's store.
+2. Convert the team name to a url-safe slug (for example 'Brick's House' becomes `bricks-house`).
+3. Open this repo on GitHub, go to `teams/`, and choose **Add file → Create new file**.
+4. Add your team details in `assignments.json`.
+5. Name the file `teams/<your-slug>.json` and paste in:
 
 ```json
 {
@@ -19,8 +21,8 @@ This is the class directory of firms. The published directory page lists every r
 }
 ```
 
-4. Choose **Propose new file**, then **Create pull request**. GitHub will fork the repo for you.
-5. Wait for the **Registry check** to run on your PR:
+6. Choose **Propose new file**, then **Create pull request**. GitHub will fork the repo for you.
+7. Wait for the **Registry check** to run on your PR:
    - **Red ✗:** read the message, fix your file, and the check runs again.
    - **Green ✓:** the instructor reviews and merges, and your team appears in the directory within a minute or two.
 
