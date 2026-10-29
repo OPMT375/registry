@@ -1,0 +1,21 @@
+name: Registry check
+on:
+  pull_request:
+    paths: ['teams/**', 'assignments.json']
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: List changed team files
+        id: changed
+        run: |
+          files=$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD -- teams | paste -sd, -)
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+      - name: Validate
+        run: node scripts/validate.mjs --author "${{ github.event.pull_request.user.login }}" --changed "${{ steps.changed.outputs.files }}"

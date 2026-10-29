@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supply Lab Directory</title>
+<style>
+  :root { --bg: #f7f6f2; --panel: #fff; --ink: #1c2430; --muted: #5f6977; --line: #dedbd3; --accent: #1f3a5f; --chip: #ecebe5; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #12161d; --panel: #1b212b; --ink: #e8ebf0; --muted: #9aa4b2; --line: #2d3542; --accent: #8fb3e0; --chip: #262d38; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+  header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 28px 0 20px; }
+  h1 { margin: 0; color: var(--accent); font-size: clamp(26px, 5vw, 36px); }
+  .sub { color: var(--muted); margin: 6px 0 0; }
+  h2 { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 28px 0 10px; }
+  .chain { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .card h3 { margin: 0 0 4px; font-size: 18px; }
+  .chip { display: inline-block; background: var(--chip); color: var(--muted); border-radius: 999px; padding: 1px 9px; font-size: 12px; }
+  .links { margin-top: 10px; font-size: 14px; display: flex; gap: 12px; flex-wrap: wrap; }
+  a { color: var(--accent); }
+  .muted { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Supply Lab Directory</h1><p class="sub">OPMT 375 · every registered firm, by chain</p></div></header>
+<main class="wrap" id="main"><p class="muted">Loading…</p></main>
+<footer class="wrap muted" style="padding:24px 16px">To join, open a pull request that adds your team file. See the registry README.</footer>
+<script>
+(async function () {
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const order = ['Source', 'Source+Make', 'Make', 'Carrier', 'Deliver', 'Deliver+Sell', 'Sell', 'Plan/Return'];
+  const main = document.getElementById('main');
+  try {
+    const { teams, updated } = await (await fetch('registry.json?v=' + Date.now())).json();
+    if (!teams.length) { main.innerHTML = '<p class="muted">No firms registered yet.</p>'; return; }
+    const chains = [...new Set(teams.map(t => t.chain))].sort();
+    main.innerHTML = chains.map(c => {
+      const ts = teams.filter(t => t.chain === c).sort((a, b) => order.indexOf(a.link) - order.indexOf(b.link));
+      return `<h2>Chain ${esc(c)}</h2><div class="chain">${ts.map(t => `
+        <article class="card"><span class="chip">${esc(t.link)}</span><h3>${esc(t.team)}</h3>
+        <div class="muted">${(t.members || []).map(m => '@' + esc(m)).join(' ')}</div>
+        <div class="links"><a href="${esc(t.storefront)}">Storefront</a>
+        <a href="https://github.com/${esc(t.repo)}/issues/new/choose">Contact</a>
+        <a href="https://github.com/${esc(t.repo)}">Repo</a></div></article>`).join('')}</div>`;
+    }).join('') + `<p class="muted">Updated ${new Date(updated).toLocaleString()}</p>`;
+  } catch (e) { main.innerHTML = '<p class="muted">Directory unavailable.</p>'; }
+})();
+</script>
+</body>
+</html>
