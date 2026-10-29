@@ -25,11 +25,4 @@ This is the class directory of firms. The published directory page lists every r
    - **Green ✓:** the instructor reviews and merges, and your team appears in the directory within a minute or two.
 
 The check enforces three things: your link and chain are the ones you were assigned, the person opening the PR is a listed member, and no two teams share a name.
-
-## Instructor setup
-
-1. Create a GitHub organization for the course (free), then create this repo inside it. Copy all files, including `.github/`.
-2. Go to **Settings → Pages** and set Source to **GitHub Actions**.
-3. Go to **Settings → Branches** and add a rule for `main`: require a pull request, and require the **Registry check** status to pass.
-4. Before class, add each team's slug, link and chain to `assignments.json`. As the org owner you can commit directly to `main`, provided the branch rule allows admin bypass.
-5. Delete `teams/example-team.json` and its assignment once real teams have joined.
+to pass.
