@@ -3,6 +3,6 @@
   "allowed_links": ["Source", "Make", "Deliver", "Sell", "Source+Make", "Deliver+Sell", "Carrier", "Plan/Return"],
   "teams": {
     "example-team": { "link": "Source+Make", "chain": "A" },
-    "minnesota-supply-company": { "link": "Make", "chain": "B" }
+    "minnesota-supply-company": { "link": "Source+Make", "chain": "A" }
   }
 }
