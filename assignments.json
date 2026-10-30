@@ -2,6 +2,7 @@
   "_note": "Instructor-only. Add one entry per team before they open their PR; the key must equal their file name in teams/. Students cannot change their link or chain.",
   "allowed_links": ["Source", "Make", "Deliver", "Sell", "Source+Make", "Deliver+Sell", "Carrier", "Plan/Return"],
   "teams": {
-    "example-team": { "link": "Source+Make", "chain": "A" }
+    "example-team": { "link": "Source+Make", "chain": "A" },
+    "minnesota-supply-company": { "link": "Source+Make", "chain": "A" }
   }
 }
