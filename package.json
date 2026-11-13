@@ -1,0 +1,13 @@
+{
+  "name": "supply-lab-registry",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "build": "node scripts/build.mjs",
+    "sync": "node scripts/sync.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}

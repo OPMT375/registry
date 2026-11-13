@@ -1,0 +1,12 @@
+{
+  "_read_me": "Record goods leaving one of your parties. order_key ties the shipment to the order it fills. Copy, rename (e.g. events/2026-11-19-ship-001.json), fill in, commit.",
+  "type": "shipping",
+  "gtin": "09990100000015",
+  "lot_code": "LOT-RF-2026-11-19-A",
+  "quantity": 5000,
+  "uom": "bu",
+  "from_gln": "0999010000011",
+  "to_gln": "GLN of the receiver",
+  "occurred_at": "2026-11-19T10:30:00-06:00",
+  "order_key": "consumer/2026-11-19-001"
+}

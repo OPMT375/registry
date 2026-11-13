@@ -1,0 +1,11 @@
+{
+  "_read_me": "Record goods arriving at one of your parties. Use the lot_code the shipper used.",
+  "type": "receiving",
+  "gtin": "GTIN of what arrived",
+  "lot_code": "LOT code from the shipper",
+  "quantity": 5000,
+  "uom": "bu",
+  "from_gln": "GLN of the shipper",
+  "to_gln": "0999010000011",
+  "occurred_at": "2026-11-19T11:15:00-06:00"
+}

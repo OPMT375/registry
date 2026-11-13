@@ -1,0 +1,7 @@
+{
+  "_read_me": "Warn a partner about something that will change what they can expect (a delay, a quality problem, a capacity change).",
+  "type": "alert",
+  "from_gln": "0999010000011",
+  "to_gln": "GLN of the partner who needs to know",
+  "note": "Dryer down until Friday; receiving capacity cut to 20,000 bu/day"
+}

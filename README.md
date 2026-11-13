@@ -28,3 +28,7 @@ This is the class directory of firms. The published directory page lists every r
 
 The check enforces three things: your link and chain are the ones you were assigned, the person opening the PR is a listed member, and no two teams share a name.
 to pass.
+
+## The chain database (from Session 6)
+
+From Session 6 on, each team also commits its master data, capabilities, signals and events to its own repo, using the files in [`team-kit/`](team-kit/README.md). The class sync copies them into one shared database. The **chain page** (`chain.html` on the published directory) shows the order board, signal health, every firm's capabilities, the GLN/GTIN codes, and any files the sync couldn't accept. Instructor setup is in [`db/README.md`](db/README.md).

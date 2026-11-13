@@ -1,9 +1,30 @@
 {
-  "_note": "Instructor-only. Add one entry per team before they open their PR; the key must equal their file name in teams/. Students cannot change their link or chain.",
-  "allowed_links": ["Source", "Make", "Deliver", "Sell", "Source+Make", "Deliver+Sell", "Carrier", "Plan/Return"],
+  "_note": "Instructor-only. Add one entry per team before they open their PR; the key must equal their file name in teams/. Students cannot change their link or chain. gln_prefix is 0999 + a two-digit team number; every GLN and GTIN the team creates must start with it (099900 is reserved for the class: consumer and samples).",
+  "allowed_links": [
+    "Source",
+    "Make",
+    "Deliver",
+    "Sell",
+    "Source+Make",
+    "Deliver+Sell",
+    "Carrier",
+    "Plan/Return"
+  ],
   "teams": {
-    "example-team": { "link": "Source+Make", "chain": "A" },
-    "minnesota-corn-soybean-storage": { "link": "Deliver", "chain": "A" },
-    "bait-food-supply-co": { "link": "Source+Make", "chain": "A" }
+    "example-team": {
+      "link": "Source+Make",
+      "chain": "A",
+      "gln_prefix": "099999"
+    },
+    "minnesota-corn-soybean-storage": {
+      "link": "Deliver",
+      "chain": "A",
+      "gln_prefix": "099901"
+    },
+    "bait-food-supply-co": {
+      "link": "Source+Make",
+      "chain": "A",
+      "gln_prefix": "099902"
+    }
   }
 }
