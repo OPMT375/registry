@@ -1,4 +1,4 @@
-// Builds the published directory: _site/index.html + _site/registry.json from teams/*.json.
+// Builds the published directory: _site/index.html, chain.html, config.js + _site/registry.json from teams/*.json.
 import fs from 'fs';
 import path from 'path';
 
@@ -13,5 +13,5 @@ const teams = (fs.existsSync(teamsDir) ? fs.readdirSync(teamsDir) : [])
   .sort((a, b) => String(a.chain).localeCompare(String(b.chain)) || String(a.team).localeCompare(String(b.team)));
 
 fs.writeFileSync(path.join(out, 'registry.json'), JSON.stringify({ updated: new Date().toISOString(), teams }, null, 2));
-fs.copyFileSync(path.join(root, 'site', 'index.html'), path.join(out, 'index.html'));
+for (const f of ['index.html', 'chain.html', 'config.js']) fs.copyFileSync(path.join(root, 'site', f), path.join(out, f));
 console.log(`Built directory with ${teams.length} team(s).`);

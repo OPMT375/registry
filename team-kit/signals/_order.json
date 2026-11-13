@@ -1,0 +1,11 @@
+{
+  "_read_me": "Copy this file, rename it (e.g. signals/2026-11-19-po-001.json), fill it in, commit. File names starting with _ are ignored. Once synced, a signal is permanent.",
+  "type": "order",
+  "from_gln": "0999010000011",
+  "to_gln": "GLN of the supplier you are ordering from (see the chain page)",
+  "gtin": "GTIN of the product you want",
+  "quantity": 5000,
+  "uom": "bu",
+  "need_by": "2026-11-24",
+  "note": "Optional: anything the supplier should know"
+}

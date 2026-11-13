@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supply Lab Chain</title>
+<style>
+  :root { --bg: #f7f6f2; --panel: #fff; --ink: #1c2430; --muted: #5f6977; --line: #dedbd3; --accent: #1f3a5f; --chip: #ecebe5;
+          --ok: #2f6b3a; --okbg: #e3f0e4; --warn: #8a5a00; --warnbg: #fbefd5; --bad: #9b2c1f; --badbg: #f8e1dd; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #12161d; --panel: #1b212b; --ink: #e8ebf0; --muted: #9aa4b2; --line: #2d3542; --accent: #8fb3e0; --chip: #262d38;
+          --ok: #9fd3a8; --okbg: #1f3324; --warn: #f0c46b; --warnbg: #3a2f17; --bad: #f2a395; --badbg: #3d211d; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+  header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 22px 0 14px; }
+  h1 { margin: 0; color: var(--accent); font-size: clamp(24px, 5vw, 32px); }
+  .sub { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+  nav { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; }
+  h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 30px 0 8px; }
+  .hint { color: var(--muted); font-size: 13px; margin: -4px 0 10px; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .card h3 { margin: 2px 0 4px; font-size: 16px; }
+  .chip { display: inline-block; background: var(--chip); color: var(--muted); border-radius: 999px; padding: 0 9px; font-size: 12px; white-space: nowrap; }
+  .s-waiting { background: var(--badbg); color: var(--bad); }
+  .s-promised { background: var(--warnbg); color: var(--warn); }
+  .s-shipped, .s-partly { background: var(--okbg); color: var(--ok); }
+  .tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  code, .key { font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .key { cursor: copy; border-bottom: 1px dashed var(--muted); }
+  .nw { white-space: nowrap; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .issue { margin: 4px 0; font-size: 14px; }
+  .issue b { color: var(--bad); } .issue.warning b { color: var(--warn); }
+  .codes { grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+  .lane { margin-bottom: 18px; }
+  .lane h3 { font-size: 15px; margin: 0 0 8px; }
+  .owner { font-size: 13px; color: var(--muted); }
+  a { color: var(--accent); }
+  #toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 6px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Supply Lab Chain</h1>
+  <p class="sub" id="status">Loading the chain database…</p>
+  <nav><a href="#orders">Order board</a><a href="#signals">Signal health</a><a href="#capabilities">Capabilities</a><a href="#codes">Codes</a><a href="#sync">Sync check</a><a href="#people" id="nav-people">Who moved the chain</a><a href="./">Directory</a></nav>
+</div></header>
+<main class="wrap">
+  <section id="orders"><h2>Order board</h2>
+    <p class="hint">Every order in the chain, newest first. Click a key to copy it into an acknowledgement or shipment file.</p>
+    <div class="tablewrap" id="orders-body"></div></section>
+  <section id="signals"><h2>Signal health</h2>
+    <p class="hint">How fast each firm answers the orders it receives. The clock runs from the order's commit to the acknowledgement's commit.</p>
+    <div class="tablewrap" id="signals-body"></div></section>
+  <section id="capabilities"><h2>Capabilities</h2>
+    <p class="hint">What each firm says it can promise, from the files in its <code>capabilities/</code> folder, in chain order.</p>
+    <div id="caps-body"></div></section>
+  <section id="codes"><h2>Codes</h2>
+    <p class="hint">Use these numbers in <code>to_gln</code> and <code>gtin</code>. Click to copy.</p>
+    <div class="grid codes"><div class="tablewrap" id="parties-body"></div><div class="tablewrap" id="products-body"></div></div></section>
+  <section id="sync"><h2>Sync check</h2>
+    <p class="hint">What the last sync could not accept. Fix the file in your repo and it clears on the next sync.</p>
+    <div id="sync-body"></div></section>
+  <section id="people"><h2>Who moved the chain</h2>
+    <p class="hint">Signals sent, events recorded, and capabilities and metrics owned, by the commit author.</p>
+    <div class="tablewrap" id="people-body"></div></section>
+  <p class="muted" style="margin:28px 0">Data comes from the class Supabase database, filled by the sync from each team's repo. This page refreshes every minute.</p>
+</main>
+<div id="toast">Copied</div>
+<script src="config.js"></script>
+<script>
+(function () {
+  const C = window.CHAIN || {};
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const key = s => s ? `<span class="key" data-copy="${esc(s)}">${esc(s)}</span>` : '';
+  const when = t => t ? new Date(t).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) : '';
+  const d = v => v ? String(v).slice(0, 10) : '';
+  const n = v => v === null || v === undefined ? '' : Number(v).toLocaleString();
+  const ORDER = ['Consumer', 'Source', 'Source+Make', 'Make', 'Carrier', 'Deliver', 'Deliver+Sell', 'Sell', 'Plan/Return'];
+  const PROC = ['plan', 'source', 'make', 'deliver', 'return', 'enable'];
+  if (C.showPeople === false) { $('people').remove(); $('nav-people').remove(); }
+
+  async function get(path) {
+    const r = await fetch(`${C.url}/rest/v1/${path}`, { headers: { apikey: C.anonKey, Authorization: `Bearer ${C.anonKey}` } });
+    if (!r.ok) throw new Error(`${path}: ${r.status}`);
+    return r.json();
+  }
+  const table = (cols, rows, empty) => rows.length
+    ? `<table><thead><tr>${cols.map(c => `<th class="${c[2] || ''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${
+        rows.map(r => `<tr>${cols.map(c => `<td class="${c[2] || ''}">${c[1](r)}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+    : `<p class="muted" style="padding:10px 12px;margin:0">${empty}</p>`;
+
+  async function load() {
+    if (!C.url || !C.anonKey) { $('status').textContent = 'Not connected: fill in site/config.js with the Supabase URL and anon key.'; return; }
+    try {
+      const [orders, health, caps, parties, products, issues, runs, teams, people] = await Promise.all([
+        get('v_orders?select=*&order=sent_at.desc&limit=200'),
+        get('v_team_signals?select=*'),
+        get('v_capability_map?select=*'),
+        get('parties?select=gln,name,role,county,team&team=neq.sample&order=team'),
+        get('products?select=gtin,name,uom,grade,team&team=neq.sample&order=team'),
+        get('sync_issues?select=*&order=team,level'),
+        get('sync_runs?select=ran_at,summary&order=ran_at.desc&limit=1'),
+        get('teams?select=team,name,link'),
+        C.showPeople === false ? Promise.resolve([]) : get('v_contributions?select=*&order=team'),
+      ]);
+      const tname = Object.fromEntries(teams.map(t => [t.team, t.name]));
+      const tlink = Object.fromEntries(teams.map(t => [t.team, t.link]));
+      const byLink = (a, b) => ORDER.indexOf(tlink[a]) - ORDER.indexOf(tlink[b]);
+      const last = runs[0];
+      $('status').textContent = last ? `Last sync ${when(last.ran_at)} · ${orders.length} orders · ${caps.length} capabilities` : 'No sync has run yet.';
+
+      $('orders-body').innerHTML = table([
+        ['Order', r => key(r.order_key)],
+        ['From → to', r => `${esc(r.buyer)} → ${esc(r.seller)}`],
+        ['Product', r => esc(r.product)],
+        ['Qty', r => `${n(r.quantity)} ${esc(r.uom)}`, 'num'],
+        ['Need by', r => esc(d(r.need_by)), 'nw'],
+        ['Sent', r => when(r.sent_at)],
+        ['Promised', r => esc(d(r.promised_on)), 'nw'],
+        ['Shipped', r => Number(r.shipped_qty) ? n(r.shipped_qty) : '', 'num'],
+        ['Status', r => `<span class="chip s-${esc(r.status.split(' ')[0])}">${esc(r.status)}</span>`],
+      ], orders, 'No orders yet.');
+
+      $('signals-body').innerHTML = table([
+        ['Firm', r => esc(r.name)], ['Link', r => esc(r.link || '')],
+        ['Orders in', r => n(r.orders_received), 'num'], ['Answered', r => n(r.orders_acknowledged), 'num'],
+        ['Waiting', r => Number(r.orders_waiting) ? `<span class="chip s-waiting">${n(r.orders_waiting)}</span>` : '0', 'num'],
+        ['Median minutes to answer', r => r.median_minutes_to_acknowledge === null ? '' : Number(r.median_minutes_to_acknowledge).toFixed(1), 'num'],
+        ['Signals sent', r => n(r.signals_sent), 'num'],
+      ], health.filter(r => r.team !== 'consumer').sort((a, b) => byLink(a.team, b.team)), 'No firms yet.');
+
+      const lanes = [...new Set(caps.map(c => c.team))].sort(byLink);
+      $('caps-body').innerHTML = lanes.length ? lanes.map(t => `<div class="lane"><h3>${esc(tname[t])} <span class="chip">${esc(tlink[t] || '')}</span></h3><div class="grid">${
+        caps.filter(c => c.team === t).sort((a, b) => PROC.indexOf(a.scor_process) - PROC.indexOf(b.scor_process)).map(c => `<article class="card">
+          <span class="chip">${esc(c.scor_process)}</span><h3>${esc(c.name)}</h3>
+          ${c.description ? `<p style="margin:0 0 6px">${esc(c.description)}</p>` : ''}
+          <div class="muted">${[c.capacity_qty !== null ? `${n(c.capacity_qty)} ${esc(c.capacity_uom || '')} per ${esc(c.capacity_period || '?')}` : '',
+            c.lead_time_days !== null ? `lead time ${n(c.lead_time_days)} d` : '', c.price !== null ? `$${c.price} ${esc(c.price_uom || '')}` : ''].filter(Boolean).join(' · ')}</div>
+          ${c.quality_promise ? `<div class="muted">Promise: ${esc(c.quality_promise)}</div>` : ''}
+          <div class="owner">Owner: ${c.owner_github ? '@' + esc(c.owner_github) : '<b>none</b>'}${c.evidence ? ` · <a href="${esc(c.evidence)}" rel="noopener">evidence</a>` : ''}</div>
+        </article>`).join('')}</div></div>`).join('') : '<p class="muted">No capabilities yet.</p>';
+
+      $('parties-body').innerHTML = table([['GLN', r => key(r.gln)], ['Party', r => esc(r.name)], ['Role', r => esc(r.role)], ['Firm', r => esc(tname[r.team] || r.team)]], parties, 'No parties yet.');
+      $('products-body').innerHTML = table([['GTIN', r => key(r.gtin)], ['Product', r => esc(r.name)], ['Unit', r => esc(r.uom)], ['Firm', r => esc(tname[r.team] || r.team)]], products, 'No products yet.');
+
+      const iteams = [...new Set(issues.map(i => i.team))].sort(byLink);
+      const clean = teams.filter(t => !['consumer', 'sample'].includes(t.team) && !iteams.includes(t.team));
+      $('sync-body').innerHTML = (iteams.map(t => `<div class="card" style="margin-bottom:10px"><h3>${esc(tname[t] || t)}</h3>${
+        issues.filter(i => i.team === t).map(i => `<p class="issue ${esc(i.level)}"><b>${i.level === 'error' ? '✗' : '!'}</b> <code>${esc(i.file || '')}</code> ${esc(i.message)}</p>`).join('')}</div>`).join('')
+        + (clean.length ? `<p class="muted">✓ No issues: ${clean.map(t => esc(t.name)).join(', ')}</p>` : '')) || '<p class="muted">No issues.</p>';
+
+      if (C.showPeople !== false) $('people-body').innerHTML = table([
+        ['Firm', r => esc(tname[r.team] || r.team)], ['Member', r => '@' + esc(r.github)],
+        ['Signals', r => n(r.signals_sent), 'num'], ['Events', r => n(r.events_recorded), 'num'],
+        ['Capabilities', r => n(r.capabilities_owned), 'num'], ['Metrics', r => n(r.metrics_owned), 'num'],
+        ['Last active', r => when(r.last_active)],
+      ], people.sort((a, b) => byLink(a.team, b.team)), 'No members yet.');
+    } catch (e) { $('status').textContent = 'Could not reach the chain database (' + e.message + ').'; }
+  }
+  document.addEventListener('click', e => {
+    const k = e.target.closest('[data-copy]'); if (!k) return;
+    navigator.clipboard?.writeText(k.dataset.copy).then(() => { const t = $('toast'); t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 900); });
+  });
+  load(); setInterval(load, 60000);
+})();
+</script>
+</body>
+</html>

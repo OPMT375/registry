@@ -1,0 +1,21 @@
+{
+  "_read_me": "Your firm's master data: the places you operate (parties) and the things you handle (products). Every gln and gtin must start with your team prefix from the chain page. Lines that start with _ are notes and are ignored.",
+  "parties": [
+    {
+      "gln": "0999010000011",
+      "name": "Redwood Falls Elevator",
+      "role": "elevator",
+      "county": "Redwood",
+      "city": "Redwood Falls"
+    }
+  ],
+  "products": [
+    {
+      "gtin": "09990100000015",
+      "name": "Yellow corn, stored",
+      "uom": "bu",
+      "grade": "U.S. No. 2 Yellow",
+      "description": "Field-dried corn held in our bins until release"
+    }
+  ]
+}

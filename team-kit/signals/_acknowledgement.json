@@ -1,0 +1,12 @@
+{
+  "_read_me": "Answer an order you received. responds_to is the order's key exactly as the chain page shows it (e.g. consumer/2026-11-19-001).",
+  "type": "acknowledgement",
+  "responds_to": "consumer/2026-11-19-001",
+  "from_gln": "0999010000011",
+  "to_gln": "GLN of the party that sent the order",
+  "gtin": "GTIN from the order",
+  "quantity": 5000,
+  "uom": "bu",
+  "promised_on": "2026-11-23",
+  "note": "Optional: if you can only promise part of the quantity, say so here"
+}

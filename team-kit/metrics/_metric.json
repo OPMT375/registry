@@ -1,0 +1,11 @@
+{
+  "_read_me": "One metric per file. Copy to metrics/<id>.json (e.g. metrics/on-time-acknowledgement.json). Write the definition so a stranger would count exactly what you count. scor_attribute: reliability, responsiveness, agility, cost or assets.",
+  "name": "Orders acknowledged within 30 minutes",
+  "scor_attribute": "responsiveness",
+  "definition": "An order counts as on time if our acknowledgement reaches the repo within 30 minutes of the order. Orders sent outside class hours start the clock at 9:55 the next class day.",
+  "calculation": "orders acknowledged within 30 minutes / orders received, this week",
+  "data_needed": "signals: sent_at of the order and of our acknowledgement that responds_to it",
+  "target": 90,
+  "unit": "%",
+  "owner": "your-github-username"
+}

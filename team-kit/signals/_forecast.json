@@ -1,0 +1,11 @@
+{
+  "_read_me": "Share what you expect to order, so your supplier can plan. A forecast is not an order.",
+  "type": "forecast",
+  "from_gln": "0999010000011",
+  "to_gln": "GLN of your supplier",
+  "gtin": "GTIN of the product",
+  "quantity": 20000,
+  "uom": "bu",
+  "need_by": "2026-12-04",
+  "note": "Expected total for the week ending need_by"
+}

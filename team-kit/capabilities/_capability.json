@@ -1,0 +1,17 @@
+{
+  "_read_me": "One capability per file. Copy this file to capabilities/<id>.json (e.g. capabilities/receive-corn.json); the file name is the id. Each teammate owns at least one. scor_process: plan, source, make, deliver, return or enable. capacity_period: hour, day, week or month. evidence: a link to a real firm doing this at about this scale.",
+  "scor_process": "deliver",
+  "name": "Receive and grade harvested corn",
+  "description": "Trucks unload at our pit; each load is weighed, sampled for moisture and graded before it goes to a bin.",
+  "product_gtin": "09990100000015",
+  "site_gln": "0999010000011",
+  "capacity_qty": 60000,
+  "capacity_uom": "bu",
+  "capacity_period": "day",
+  "lead_time_days": 0,
+  "quality_promise": "Moisture tested on every load; loads over 15.5% are dried before storage",
+  "price": 0.04,
+  "price_uom": "per bu",
+  "owner": "your-github-username",
+  "evidence": "https://example.com/a-real-elevator-receiving-page"
+}
