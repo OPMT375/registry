@@ -4,6 +4,6 @@
   "teams": {
     "example-team": { "link": "Source+Make", "chain": "A" },
     "minnesota-corn-soybean-storage": { "link": "Deliver", "chain": "A" },
-    "bait": { "link": "Source+Make", "chain": "A" }
+    "bait-food-supply-co": { "link": "Source+Make", "chain": "A" }
   }
 }
