@@ -1,0 +1,27 @@
+name: Sync chain database
+# Copies every team's domain, capabilities, metrics, signals and events into the class database.
+# Run it by hand in class (Actions → Sync chain database → Run workflow), and it also runs every 10 minutes.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/10 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: chain-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Sync
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/sync.mjs

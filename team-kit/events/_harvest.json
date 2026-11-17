@@ -1,0 +1,10 @@
+{
+  "_read_me": "Create a new lot: harvest, initial_packing or transformation. For transformation, input_lot_code is the lot it was made from.",
+  "type": "harvest",
+  "gtin": "09990100000015",
+  "lot_code": "LOT-RF-2026-11-19-A",
+  "quantity": 60000,
+  "uom": "bu",
+  "to_gln": "0999010000011",
+  "occurred_at": "2026-11-19T08:00:00-06:00"
+}
