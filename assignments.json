@@ -3,6 +3,7 @@
   "allowed_links": ["Source", "Make", "Deliver", "Sell", "Source+Make", "Deliver+Sell", "Carrier", "Plan/Return"],
   "teams": {
     "example-team": { "link": "Source+Make", "chain": "A" },
-    "minnesota-corn-soybean-storage": { "link": "Deliver", "chain": "A" }
+    "minnesota-corn-soybean-storage": { "link": "Deliver", "chain": "A" },
+    "bait": { "link": "Source+Make", "chain": "A" }
   }
 }
