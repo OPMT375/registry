@@ -4,7 +4,7 @@
   "teams": {
     "farm-consumer": { "link": "Source+Make", "chain": "A" },
     "minnesota-corn-soybean-storage": { "link": "Deliver", "chain": "A" },
-    "-BAIT": { "link": "Source+Make", "chain": "A" },
+    "bait-food-supply-co": { "link": "Source+Make", "chain": "A" },
     "the-second-team": { "link": "Deliver", "chain": "A" }
   }
 }
