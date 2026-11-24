@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capability: Your Pillar | Your Firm</title>
+<!--
+  OPMT 375 capability page (Checkpoint C).
+  Copy this file to students/your-name/index.html and replace every bracketed [placeholder].
+  Write for a BUYER, not for Bob. Keep all six sections. Delete these comments when you are done.
+-->
+<style>
+  :root { --bg:#f7f6f2; --panel:#fff; --ink:#1c2430; --muted:#5f6977; --line:#dedbd3; --accent:#1f3a5f; --us:#2f7d4f; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12161d; --panel:#1b212b; --ink:#e8ebf0; --muted:#9aa4b2; --line:#2d3542; --accent:#8fb3e0; --us:#5fbf86; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif; }
+  .wrap { max-width:820px; margin:0 auto; padding:0 18px; }
+  header { background:var(--panel); border-bottom:1px solid var(--line); padding:26px 0 20px; }
+  .pillar { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  h1 { margin:4px 0 6px; color:var(--accent); font-size:clamp(24px,5vw,34px); line-height:1.25; }
+  nav a { color:var(--accent); margin-right:14px; font-size:14px; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:18px 20px; margin:18px 0; }
+  h2 { margin:0 0 8px; font-size:19px; }
+  .proof { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+  .stat { border:1px solid var(--line); border-radius:8px; padding:12px; }
+  .stat .label { color:var(--muted); font-size:13px; }
+  .stat .value { font-size:26px; font-weight:700; }
+  .stat.us .value { color:var(--us); }
+  a { color:var(--accent); }
+  .muted { color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="pillar">[Pillar: Plan / Source / Make / Deliver / Return] · [Your firm name]</div>
+  <!-- 1. THE CLAIM: one sentence a buyer cares about, e.g. "Every lot traced to the field in under 2 minutes." -->
+  <h1>[Your one-sentence claim]</h1>
+  <nav><a href="../../">Home</a><a href="../../dashboard/">Dashboard</a><a href="#sources">Sources</a></nav>
+</div></header>
+
+<main class="wrap">
+  <section>
+    <!-- 2. THE PROOF: must match your row in dashboard/metrics.csv exactly. -->
+    <h2>The proof: [metric name]</h2>
+    <div class="proof">
+      <div class="stat"><div class="label">Typical supplier (incumbent)</div><div class="value">[value + unit]</div></div>
+      <div class="stat us"><div class="label">Our firm</div><div class="value">[value + unit]</div></div>
+      <div class="stat"><div class="label">What we promise you</div><div class="value">[target]</div></div>
+    </div>
+    <p class="muted">Baseline from [source of the incumbent number]. Our value is based on [real company]'s result (see below).</p>
+  </section>
+
+  <section>
+    <!-- 3. HOW IT WORKS: plain language. Which flow (goods, money, information)? What data does it capture? Who or what acts on it? -->
+    <h2>How it works</h2>
+    <p>[Name the digital system. Explain in 2-4 sentences, without jargon: which flow it improves, what data it captures, and who acts on that data and how.]</p>
+  </section>
+
+  <section>
+    <!-- 4. REAL-WORLD EXAMPLE: the company that actually did it, what changed, and the source. Label vendor claims as vendor claims. -->
+    <h2>Who has done this</h2>
+    <p>[Company] deployed [system] in [year]. [What changed, with the number.] (<a href="[source URL]">source</a>)</p>
+  </section>
+
+  <section>
+    <!-- 5. THE NEW CONSTRAINT: what this system makes harder or riskier, and how you manage it. Buyers trust suppliers who name their risks. -->
+    <h2>What this changes, and how we manage it</h2>
+    <p>[The new constraint or risk (data quality, skills, vendor dependence, cost, an agent's mistakes) and what your firm does about it.]</p>
+  </section>
+
+  <section>
+    <!-- 6. YOUR SIGNAL: link to the data page you built in "Building a Data Page". -->
+    <h2>The signal we watch</h2>
+    <p>[One sentence on what your data page shows and why it is an early warning for this pillar.] <a href="[link to your data page]">See the live data</a>.</p>
+  </section>
+
+  <section id="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>[Source 1: title, publisher, date, URL]</li>
+      <li>[Source 2]</li>
+    </ul>
+    <p class="muted">Prepared by [your name]. AI assistance is logged in <a href="./ai-log.md">ai-log.md</a>.</p>
+  </section>
+</main>
+</body>
+</html>

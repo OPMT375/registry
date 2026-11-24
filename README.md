@@ -27,4 +27,9 @@ This is the class directory of firms. The published directory page lists every r
    - **Green ✓:** the instructor reviews and merges, and your team appears in the directory within a minute or two.
 
 The check enforces three things: your link and chain are the ones you were assigned, the person opening the PR is a listed member, and no two teams share a name.
-to pass.
+
+## Final project
+
+The **[starter kit](starter-kit/)** has the files every team repo needs for *Make the Case to Switch Suppliers*: the dashboard (`dashboard/metrics.csv` and a page that reads it), the capability page and AI log templates for `students/your-name/`, and the pitch outline for `pitch/`.
+
+The published directory checks each team's live dashboard, student folders and pitch folder, so you can see at a glance what is still missing.
