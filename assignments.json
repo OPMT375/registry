@@ -5,6 +5,7 @@
     "farm-consumer": { "link": "Source+Make", "chain": "A" },
     "minnesota-corn-soybean-storage": { "link": "Deliver", "chain": "A" },
     "bait-food-supply-co": { "link": "Source+Make", "chain": "A" },
-    "the-second-team": { "link": "Deliver", "chain": "A" }
+    "the-second-team": { "link": "Deliver", "chain": "A" },
+    "gucci-gang": { "link": "Source", "chain": "A" }
   }
 }
