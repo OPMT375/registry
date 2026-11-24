@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCOR Dashboard</title>
+<!--
+  OPMT 375 starter dashboard.
+  Team: this page reads metrics.csv (in this same folder) and shows one card per teammate.
+  You should not need to edit the code. Edit metrics.csv, one row per teammate, each through your own pull request.
+  Change the firm name in the <h1> below, then add your own ME: comment where the page reads the file (search for "ME:").
+-->
+<style>
+  :root { --bg:#f7f6f2; --panel:#fff; --ink:#1c2430; --muted:#5f6977; --line:#dedbd3; --accent:#1f3a5f; --us:#2f7d4f; --them:#9aa4b2; --warn:#a15c00; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12161d; --panel:#1b212b; --ink:#e8ebf0; --muted:#9aa4b2; --line:#2d3542; --accent:#8fb3e0; --us:#5fbf86; --them:#5f6977; --warn:#e0a35a; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif; }
+  .wrap { max-width:1000px; margin:0 auto; padding:0 16px; }
+  header { background:var(--panel); border-bottom:1px solid var(--line); padding:24px 0 18px; }
+  h1 { margin:0; color:var(--accent); font-size:clamp(24px,5vw,34px); }
+  .sub { color:var(--muted); margin:4px 0 0; }
+  nav a { color:var(--accent); margin-right:14px; font-size:14px; }
+  .grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); margin:22px 0; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .pillar { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .card h2 { margin:2px 0 2px; font-size:18px; }
+  .owner { color:var(--muted); font-size:14px; margin-bottom:10px; }
+  .row { display:grid; grid-template-columns:96px 1fr auto; gap:8px; align-items:center; font-size:14px; margin:6px 0; }
+  .bar { height:12px; border-radius:6px; background:var(--line); overflow:hidden; }
+  .bar span { display:block; height:100%; }
+  .us span { background:var(--us); } .them span { background:var(--them); }
+  .target { font-size:14px; margin-top:8px; }
+  .src { font-size:13px; margin-top:10px; color:var(--muted); word-break:break-word; }
+  .src a { color:var(--accent); }
+  .flag { color:var(--warn); font-size:13px; margin-top:6px; }
+  .msg { color:var(--muted); }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Your Firm Name: SCOR Dashboard</h1>
+  <p class="sub">Our performance against the incumbent supplier, one metric per SCOR pillar.</p>
+  <nav><a href="../">Home</a><a href="./metrics.csv">Raw data (metrics.csv)</a></nav>
+</div></header>
+<main class="wrap">
+  <div id="metrics" class="grid"><p class="msg">Loading metrics…</p></div>
+  <p class="msg" id="note"></p>
+</main>
+<script>
+const COLUMNS = ['pillar','owner','metric','unit','incumbent_value','our_value','target','real_company','source_url','as_of'];
+
+// Splits CSV text into rows of fields. Handles quoted fields that contain commas.
+function parseCSV(text) {
+  const rows = []; let row = [], field = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i], n = text[i + 1];
+    if (q && c === '"' && n === '"') { field += '"'; i++; }
+    else if (c === '"') q = !q;
+    else if (c === ',' && !q) { row.push(field.trim()); field = ''; }
+    else if ((c === '\n' || c === '\r') && !q) {
+      if (c === '\r' && n === '\n') i++;
+      row.push(field.trim()); if (row.some(x => x)) rows.push(row); row = []; field = '';
+    } else field += c;
+  }
+  row.push(field.trim()); if (row.some(x => x)) rows.push(row);
+  return rows;
+}
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = s => { const v = parseFloat(String(s).replace(/[^0-9.\-]/g, '')); return Number.isFinite(v) ? v : null; };
+
+function card(m) {
+  const them = num(m.incumbent_value), us = num(m.our_value);
+  const max = Math.max(them ?? 0, us ?? 0) || 1;
+  const pct = v => v == null ? 0 : Math.round((v / max) * 100);
+  let change = '';
+  if (them && us != null) {
+    const d = ((us - them) / Math.abs(them)) * 100;
+    change = `${d > 0 ? '+' : ''}${d.toFixed(0)}% vs incumbent`;
+  }
+  const flags = [];
+  if (!m.source_url) flags.push('No source yet');
+  if (them == null || us == null) flags.push('Missing a value');
+  return `<article class="card">
+    <div class="pillar">${esc(m.pillar)}</div>
+    <h2>${esc(m.metric) || 'Metric not chosen yet'}</h2>
+    <div class="owner">${esc(m.owner)}${m.unit ? ' · ' + esc(m.unit) : ''}</div>
+    <div class="row"><span>Incumbent</span><div class="bar them"><span style="width:${pct(them)}%"></span></div><strong>${esc(m.incumbent_value) || '–'}</strong></div>
+    <div class="row"><span>Our firm</span><div class="bar us"><span style="width:${pct(us)}%"></span></div><strong>${esc(m.our_value) || '–'}</strong></div>
+    <div class="target">Target: <strong>${esc(m.target) || '–'}</strong>${change ? ' · ' + change : ''}</div>
+    <div class="src">Real example: ${esc(m.real_company) || '–'}${m.source_url ? ` · <a href="${esc(m.source_url)}" target="_blank" rel="noopener">source</a>` : ''}${m.as_of ? ' · as of ' + esc(m.as_of) : ''}</div>
+    ${flags.length ? `<div class="flag">${flags.join(' · ')}</div>` : ''}
+  </article>`;
+}
+
+(async function () {
+  const box = document.getElementById('metrics');
+  try {
+    // ME: (replace this line with your own words: what does the next line do, and why does the page need it?)
+    const res = await fetch('./metrics.csv?v=' + Date.now());
+    if (!res.ok) throw new Error('Could not load metrics.csv (' + res.status + ')');
+    const [header, ...rows] = parseCSV(await res.text());
+    const cols = header.map(h => h.toLowerCase());
+    const missing = COLUMNS.filter(c => !cols.includes(c));
+    if (missing.length) throw new Error('metrics.csv is missing column(s): ' + missing.join(', '));
+    const metrics = rows.map(r => Object.fromEntries(cols.map((c, i) => [c, r[i] ?? ''])));
+    box.innerHTML = metrics.length ? metrics.map(card).join('') : '<p class="msg">No rows yet. Each teammate adds one row to metrics.csv.</p>';
+    document.getElementById('note').textContent = 'Lower is better for time and cost metrics; higher is better for rates and percentages. Read each metric with its unit.';
+  } catch (e) {
+    box.innerHTML = '<p class="msg">' + esc(e.message) + '</p>';
+  }
+})();
+</script>
+</body>
+</html>

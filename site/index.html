@@ -21,11 +21,17 @@
   .links { margin-top: 10px; font-size: 14px; display: flex; gap: 12px; flex-wrap: wrap; }
   a { color: var(--accent); }
   .muted { color: var(--muted); font-size: 13px; }
+  .final { margin-top:12px; border-top:1px solid var(--line); padding-top:10px; font-size:13px; }
+  .final h4 { margin:0 0 6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .final ul { margin:4px 0 0; padding-left:18px; }
+  .ok { color:#2f7d4f; } .warn { color:#a15c00; }
+  @media (prefers-color-scheme: dark) { .ok { color:#5fbf86; } .warn { color:#e0a35a; } }
+  .kit { background: var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-top:18px; font-size:14px; }
 </style>
 </head>
 <body>
 <header><div class="wrap"><h1>Supply Lab Directory</h1><p class="sub">OPMT 375 · every registered firm, by chain</p></div></header>
-<main class="wrap" id="main"><p class="muted">Loading…</p></main>
+<main class="wrap"><div class="kit"><strong>Final project:</strong> each card checks the team's live dashboard, student folders and pitch folder. Missing pieces? Use the <a href="https://github.com/OPMT375/registry/tree/main/starter-kit">final project starter kit</a>.</div><div id="main"><p class="muted">Loading…</p></div></main>
 <footer class="wrap muted" style="padding:24px 16px">To join, open a pull request that adds your team file. See the registry README.</footer>
 <script>
 (async function () {
@@ -43,9 +49,71 @@
         <div class="muted">${(t.members || []).map(m => '@' + esc(m)).join(' ')}</div>
         <div class="links"><a href="${esc(t.storefront)}">Storefront</a>
         <a href="https://github.com/${esc(t.repo)}/issues/new/choose">Contact</a>
-        <a href="https://github.com/${esc(t.repo)}">Repo</a></div></article>`).join('')}</div>`;
+        <a href="https://github.com/${esc(t.repo)}">Repo</a>
+        <a href="${esc(site(t))}dashboard/">Dashboard</a></div>
+        <div class="final" data-team="${esc(t.id)}"><span class="muted">Checking final project…</span></div></article>`).join('')}</div>`;
     }).join('') + `<p class="muted">Updated ${new Date(updated).toLocaleString()}</p>`;
+    teams.forEach(t => checkFinal(t).catch(() => {}));
   } catch (e) { main.innerHTML = '<p class="muted">Directory unavailable.</p>'; }
+
+  function site(t) { return String(t.storefront || '').replace(/\/?$/, '/'); }
+
+  // Minimal CSV parser (handles quoted commas).
+  function parseCSV(text) {
+    const rows = []; let row = [], f = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i], n = text[i + 1];
+      if (q && c === '"' && n === '"') { f += '"'; i++; }
+      else if (c === '"') q = !q;
+      else if (c === ',' && !q) { row.push(f.trim()); f = ''; }
+      else if ((c === '\n' || c === '\r') && !q) { if (c === '\r' && n === '\n') i++; row.push(f.trim()); if (row.some(x => x)) rows.push(row); row = []; f = ''; }
+      else f += c;
+    }
+    row.push(f.trim()); if (row.some(x => x)) rows.push(row);
+    return rows;
+  }
+
+  async function gh(path) {
+    const r = await fetch('https://api.github.com/repos/' + path, { headers: { Accept: 'application/vnd.github+json' } });
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error('GitHub ' + r.status);
+    return r.json();
+  }
+
+  async function checkFinal(t) {
+    const box = document.querySelector(`.final[data-team="${CSS.escape(t.id)}"]`);
+    if (!box) return;
+    const base = site(t), out = [];
+
+    // 1. Dashboard rows, read from the live site.
+    let rows = [];
+    try {
+      const r = await fetch(base + 'dashboard/metrics.csv?v=' + Date.now());
+      if (r.ok) {
+        const [head, ...body] = parseCSV(await r.text());
+        const cols = (head || []).map(h => h.toLowerCase());
+        rows = body.map(b => Object.fromEntries(cols.map((c, i) => [c, b[i] || ''])));
+        out.push(rows.length
+          ? `<div class="ok">✓ Dashboard: ${rows.length} metric row${rows.length === 1 ? '' : 's'}</div><ul>${rows.map(m =>
+              `<li>${esc(m.pillar)} · ${esc(m.owner)}: ${esc(m.metric) || '<span class="warn">no metric</span>'}${m.source_url ? '' : ' <span class="warn">(no source)</span>'}</li>`).join('')}</ul>`
+          : `<div class="warn">• Dashboard file is live but has no rows yet</div>`);
+      } else out.push(`<div class="warn">• No dashboard/metrics.csv on the live site</div>`);
+    } catch { out.push(`<div class="warn">• No dashboard/metrics.csv on the live site</div>`); }
+
+    // 2. Student folders and pitch folder, read from the repo.
+    try {
+      const [students, pitch] = await Promise.all([gh(t.repo + '/contents/students'), gh(t.repo + '/contents/pitch')]);
+      const dirs = Array.isArray(students) ? students.filter(x => x.type === 'dir' && !x.name.startsWith('_')) : [];
+      out.push(dirs.length
+        ? `<div class="ok">✓ Capability pages: ${dirs.map(d => `<a href="${esc(base + 'students/' + encodeURIComponent(d.name) + '/')}">${esc(d.name)}</a>`).join(', ')}</div>`
+        : `<div class="warn">• No students/ folders (lowercase students/, one folder each)</div>`);
+      const members = (t.members || []).length;
+      if (dirs.length && members && dirs.length < members) out.push(`<div class="warn">• ${dirs.length} of ${members} members have a folder</div>`);
+      out.push(pitch ? `<div class="ok">✓ pitch/ folder</div>` : `<div class="muted">• No pitch/ folder yet</div>`);
+    } catch { out.push(`<div class="muted">• Repo folders could not be checked right now (GitHub limit). Try again later.</div>`); }
+
+    box.innerHTML = `<h4>Final project</h4>${out.join('')}`;
+  }
 })();
 </script>
 </body>
